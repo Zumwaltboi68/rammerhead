@@ -1,4 +1,9 @@
 (function () {
+    {
+        const path = location.href.slice(location.origin.length);
+        history.replaceState(null, null, location.origin + path.replace(/^\/[a-z0-9]{32}\/\w+:\/(?!\/)/, '$&/'));
+    }
+
     var hammerhead = window['%hammerhead%'];
     if (!hammerhead) throw new Error('hammerhead not loaded yet');
     if (hammerhead.settings._settings.sessionId) {
