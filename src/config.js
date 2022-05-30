@@ -7,8 +7,8 @@ module.exports = {
     //// HOSTING CONFIGURATION ////
 
     bindingAddress: '127.0.0.1',
-    port: 8080,
-    crossDomainPort: 8081,
+    port: process.env.PORT,
+    crossDomainPort: process.env.CROSS_DOMAIN_PORT,
     publicDir: path.join(__dirname, '../public'), // set to null to disable
 
     // if workers is null or 1, multithreading is disabled
@@ -21,14 +21,34 @@ module.exports = {
     // this function's return object will determine how the client url rewriting will work.
     // set them differently from bindingAddress and port if rammerhead is being served
     // from a reverse proxy.
-    getServerInfo: () => ({ hostname: 'localhost', port: 8080, crossDomainPort: 8081, protocol: 'http:' }),
+    getServerInfo: (req) => {
+        const { origin_proxy } = cookie.parse(req.headers.cookie || '');
+
+        let origin;
+
+        try {
+            origin = new URL(origin_proxy);
+        } catch (error) {
+            console.log(error, req.headers.cookie);
+            origin = new URL(`${req.socket.encrypted ? 'https:' : 'http:'}//${req.headers.host}`);
+        }
+
+        const { hostname, port, protocol } = origin;
+
+        return {
+            hostname,
+            port,
+            crossDomainPort: port,
+            protocol
+        };
+    },
     // example of non-hard-coding the hostname header
     // getServerInfo: (req) => {
     //     return { hostname: new URL('http://' + req.headers.host).hostname, port: 443, crossDomainPort: 8443, protocol: 'https: };
     // },
 
     // enforce a password for creating new sessions. set to null to disable
-    password: 'sharkie4life',
+    password: null,
 
     // disable or enable localStorage sync (turn off if clients send over huge localStorage data, resulting in huge memory usages)
     disableLocalStorageSync: false,
@@ -76,36 +96,9 @@ module.exports = {
     generatePrefix: (level) => `[${new Date().toISOString()}] [${level.toUpperCase()}] `,
 
     // logger depends on this value
-    getIP: (req) => req.socket.remoteAddress
+    getIP: (req) => (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').split(',')[0].trim()
     // use the example below if rammerhead is sitting behind a reverse proxy like nginx
     // getIP: req => (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').split(',')[0].trim()
-    
-    ,
-    password: null,
-    port: process.env.PORT,
-    crossDomainPort: process.env.CROSS_DOMAIN_PORT,
-    getIP: req => (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').split(',')[0].trim(),
-    getServerInfo: (req) => {
-        const { origin_proxy } = cookie.parse(req.headers.cookie || '');
-
-        let origin;
-
-        try {
-            origin = new URL(origin_proxy);
-        } catch (error) {
-            console.log(error, req.headers.cookie);
-            origin = new URL(`${req.socket.encrypted ? 'https:' : 'http:'}//${req.headers.host}`);
-        }
-
-        const { hostname, port, protocol } = origin;
-
-        return {
-            hostname,
-            port,
-            crossDomainPort: port,
-            protocol
-        };
-    },
 };
 
 if (fs.existsSync(path.join(__dirname, '../config.js'))) Object.assign(module.exports, require('../config'));
