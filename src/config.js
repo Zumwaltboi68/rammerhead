@@ -1,3 +1,4 @@
+const cookie = require('cookie');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -78,6 +79,33 @@ module.exports = {
     getIP: (req) => req.socket.remoteAddress
     // use the example below if rammerhead is sitting behind a reverse proxy like nginx
     // getIP: req => (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').split(',')[0].trim()
+    
+    ,
+    password: null,
+    port: process.env.PORT,
+    crossDomainPort: process.env.CROSS_DOMAIN_PORT,
+    getIP: req => (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').split(',')[0].trim(),
+    getServerInfo: (req) => {
+        const { origin_proxy } = cookie.parse(req.headers.cookie || '');
+
+        let origin;
+
+        try {
+            origin = new URL(origin_proxy);
+        } catch (error) {
+            console.log(error, req.headers.cookie);
+            origin = new URL(`${req.socket.encrypted ? 'https:' : 'http:'}//${req.headers.host}`);
+        }
+
+        const { hostname, port, protocol } = origin;
+
+        return {
+            hostname,
+            port,
+            crossDomainPort: port,
+            protocol
+        };
+    },
 };
 
 if (fs.existsSync(path.join(__dirname, '../config.js'))) Object.assign(module.exports, require('../config'));
