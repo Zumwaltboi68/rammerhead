@@ -264,12 +264,25 @@
             }
         }
 
-        const replaceUrl = (url, replacer) => {
+		function patch(url) {
+			// url = _rhsEPrcb://bqhQko.tHR/
+			// remove slash
+			return url.replace(/(^\w+:\/)\//, '$1');
+		}
+
+		function unpatch(url) {
+			// url = _rhsEPrcb:/bqhQko.tHR/
+			// restore slash
+			return url.replace(/^\w+:\/(?!\/)/, '$&/');
+		}
+
+		const replaceUrl = (url, replacer) => {
             //        regex:              https://google.com/    sessionid/   url
-            return (url || '').replace(/^((?:[a-z0-9]+:\/\/[^/]+)?(?:\/[^/]+\/))([^]+)/i, function (_, g1, g2) {
-                return g1 + replacer(g2);
-            });
-        };
+			return (url || '').replace(/^((?:[a-z0-9]+:\/\/[^/]+)?(?:\/[^/]+\/))([^]+)/i, function (_, g1, g2) {
+				return g1 + replacer(g2);
+			})
+		};
+		
         const shuffler = new StrShuffler(shuffleDict);
 
         // shuffle current url if it isn't already shuffled (unshuffled urls likely come from user input)
@@ -285,10 +298,10 @@
             if (noShuffling) {
                 return getProxyUrl(url, opts);
             }
-            return replaceUrl(getProxyUrl(url, opts), (u) => shuffler.shuffle(u), true);
+            return replaceUrl(getProxyUrl(url, opts), (u) => patch(shuffler.shuffle(u)), true)
         });
-        hammerhead.utils.url.overrideParseProxyUrl(function (url) {
-            return parseProxyUrl(replaceUrl(url, (u) => shuffler.unshuffle(u), false));
+		hammerhead.utils.url.overrideParseProxyUrl(function (url) {
+            return parseProxyUrl(replaceUrl(url, (u) => shuffler.unshuffle(unpatch(u)), false));
         });
         // manual hooks //
         window.overrideGetProxyUrl(
@@ -296,14 +309,14 @@
                 function (url, opts) {
                     if (noShuffling) {
                         return getProxyUrl$1(url, opts);
-                    }
-                    return replaceUrl(getProxyUrl$1(url, opts), (u) => shuffler.shuffle(u), true);
+					}
+                    return replaceUrl(getProxyUrl$1(url, opts), (u) => patch(shuffler.shuffle(u)), true);
                 }
         );
         window.overrideParseProxyUrl(
             (parseProxyUrl$1) =>
                 function (url) {
-                    return parseProxyUrl$1(replaceUrl(url, (u) => shuffler.unshuffle(u), false));
+                    return parseProxyUrl$1(replaceUrl(url, (u) => shuffler.unshuffle(unpatch(u)), false));
                 }
         );
     }

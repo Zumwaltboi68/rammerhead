@@ -9,6 +9,18 @@ const replaceUrl = (url, replacer) => {
     });
 };
 
+function patch(url) {
+	// url = _rhsEPrcb://bqhQko.tHR/
+	// remove slash
+	return url.replace(/(^\w+:\/)\//, '$1');
+}
+
+function unpatch(url) {
+	// url = _rhsEPrcb:/bqhQko.tHR/
+	// restore slash
+	return url.replace(/^\w+:\/(?!\/)/, '$&/');
+}
+
 // unshuffle incoming url //
 const BUILTIN_HEADERS = require('testcafe-hammerhead/lib/request-pipeline/builtin-header-names');
 const _dispatch = RequestPipelineContext.prototype.dispatch;
@@ -21,10 +33,10 @@ RequestPipelineContext.prototype.dispatch = function (openSessions) {
     }
     if (session && session.shuffleDict) {
         const shuffler = new StrShuffler(session.shuffleDict);
-        this.req.url = replaceUrl(this.req.url, (url) => shuffler.unshuffle(url));
+        this.req.url = replaceUrl(this.req.url, (url) => shuffler.unshuffle(unpatch(url)));
         if (getSessionId(this.req.headers[BUILTIN_HEADERS.referer]) === sessionId) {
             this.req.headers[BUILTIN_HEADERS.referer] = replaceUrl(this.req.headers[BUILTIN_HEADERS.referer], (url) =>
-                shuffler.unshuffle(url)
+                shuffler.unshuffle(unpatch(url))
             );
         }
     }
@@ -41,7 +53,7 @@ RequestPipelineContext.prototype.toProxyUrl = function (...args) {
     if (!this.session.shuffleDict || disableShuffling) return proxyUrl;
 
     const shuffler = new StrShuffler(this.session.shuffleDict);
-    return replaceUrl(proxyUrl, (url) => shuffler.shuffle(url));
+    return replaceUrl(proxyUrl, (url) => patch(shuffler.shuffle(url)));
 };
 
 // unshuffle task.js referer header
@@ -55,7 +67,7 @@ Proxy.prototype._onTaskScriptRequest = async function _onTaskScriptRequest(req, 
     if (session && session.shuffleDict) {
         const shuffler = new StrShuffler(session.shuffleDict);
         req.headers[BUILTIN_HEADERS.referer] = replaceUrl(req.headers[BUILTIN_HEADERS.referer], (url) =>
-            shuffler.unshuffle(url)
+            shuffler.unshuffle(unpatch(url))
         );
     }
     return __onTaskScriptRequest.call(this, req, ...args);
