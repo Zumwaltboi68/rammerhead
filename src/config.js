@@ -8,7 +8,7 @@ module.exports = {
 
     bindingAddress: '127.0.0.1',
     port: process.env.PORT,
-    crossDomainPort: process.env.CROSS_DOMAIN_PORT,
+    crossDomainPort: null,
     publicDir: path.join(__dirname, '../public'), // set to null to disable
 
     // if workers is null or 1, multithreading is disabled
