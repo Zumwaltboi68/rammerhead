@@ -12,13 +12,13 @@ const replaceUrl = (url, replacer) => {
 function patch(url) {
 	// url = _rhsEPrcb://bqhQko.tHR/
 	// remove slash
-	return url.replace(/(^\w+:\/)\//, '$1');
+	return url.replace(/(^.*?:\/)\//, '$1');
 }
 
 function unpatch(url) {
 	// url = _rhsEPrcb:/bqhQko.tHR/
 	// restore slash
-	return url.replace(/^\w+:\/(?!\/)/, '$&/');
+	return url.replace(/^.*?:\/(?!\/)/, '$&/');
 }
 
 // unshuffle incoming url //

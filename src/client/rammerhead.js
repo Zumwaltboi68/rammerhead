@@ -1,9 +1,4 @@
 (function () {
-    {
-        const path = location.href.slice(location.origin.length);
-        history.replaceState(null, null, location.origin + path.replace(/^\/[a-z0-9]{32}\/\w+:\/(?!\/)/, '$&/'));
-    }
-
     var hammerhead = window['%hammerhead%'];
     if (!hammerhead) throw new Error('hammerhead not loaded yet');
     if (hammerhead.settings._settings.sessionId) {
@@ -267,13 +262,13 @@
 		function patch(url) {
 			// url = _rhsEPrcb://bqhQko.tHR/
 			// remove slash
-			return url.replace(/(^\w+:\/)\//, '$1');
+			return url.replace(/(^.*?:\/)\//, '$1');
 		}
 
 		function unpatch(url) {
 			// url = _rhsEPrcb:/bqhQko.tHR/
 			// restore slash
-			return url.replace(/^\w+:\/(?!\/)/, '$&/');
+			return url.replace(/^.*?:\/(?!\/)/, '$&/');
 		}
 
 		const replaceUrl = (url, replacer) => {
