@@ -4,7 +4,7 @@
 
 1. Install dependencies
 ```sh
-$ npm install --save-dev
+$ npm install --include=dev
 ```
 2. Build
 ```sh
