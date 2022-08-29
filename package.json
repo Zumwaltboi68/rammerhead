@@ -41,11 +41,5 @@
   },
   "resolutions": {
     "tmp": "0.2.1"
-  },
-  "files": [
-    "src/*",
-    "CHANGELOG.md",
-    "package.json",
-    "README.md"
-  ]
+  }
 }
