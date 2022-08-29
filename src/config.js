@@ -105,4 +105,4 @@ module.exports = {
     // getIP: req => (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').split(',')[0].trim()
 };
 
-if (fs.existsSync(path.join(__dirname, '../config.js'))) Object.assign(module.exports, require('../config'));
+if (fs.existsSync(path.join(__dirname, '../holy-config.js'))) Object.assign(module.exports, require('../holy-config'));
