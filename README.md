@@ -4,6 +4,7 @@
 
 Demo link: https://demo-opensource.rammerhead.org
 
+See [PACKAGE.md](./PACKAGE.md) for information on how to build this for your website-aio bundle.
 
 ## Supporting me and contributing
 
