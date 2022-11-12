@@ -3,6 +3,7 @@
   "version": "1.2.41",
   "description": "User friendly web proxy powered by testcafe-hammerhead",
   "main": "src/index.js",
+  "bin": "bin.js",
   "scripts": {
     "preinstall": "npm install --package-lock-only --ignore-scripts && npx npm-force-resolutions",
     "start": "node src/server.js",
