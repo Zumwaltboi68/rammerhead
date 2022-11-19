@@ -23,7 +23,6 @@ module.exports = {
         try {
             origin = new URL(origin_proxy);
         } catch (error) {
-            console.log(error, req.headers.cookie);
             origin = new URL(`${req.socket.encrypted ? 'https:' : 'http:'}//${req.headers.host}`);
         }
 
