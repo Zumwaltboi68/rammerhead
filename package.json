@@ -3,7 +3,6 @@
   "version": "1.2.41-holy.1",
   "description": "User friendly web proxy powered by testcafe-hammerhead",
   "main": "src/index.js",
-  "bin": "bin.js",
   "scripts": {
     "preinstall": "npm install --package-lock-only --ignore-scripts && npx npm-force-resolutions",
     "start": "node src/server.js",
@@ -27,9 +26,8 @@
   "dependencies": {
     "async-exit-hook": "^2.0.1",
     "cookie": "^0.5.0",
-    "keyv-lru-files": "github:binary-person/keyv-lru-files#patch-1",
+    "keyv-lru-files": "github:holy-unblocker/keyv-lru-files",
     "mime": "^2.5.2",
-    "sticky-session-custom": "^1.2.0",
     "testcafe-hammerhead": "24.5.18",
     "uglify-js": "^3.15.3",
     "uuid": "^8.3.2",
