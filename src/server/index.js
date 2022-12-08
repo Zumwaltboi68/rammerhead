@@ -25,7 +25,7 @@ function createRammerhead() {
         bindingAddress: config.bindingAddress,
         port: config.port,
         crossDomainPort: null,
-        dontListen: false,
+        dontListen: true,
         ssl: config.ssl,
         getServerInfo: config.getServerInfo,
         disableLocalStorageSync: config.disableLocalStorageSync,
