@@ -1,4 +1,4 @@
-# rammerhead
+# rammerhead shark
 
 > proxy based on testcafe-hammerhead (password is `sharkie4life`)
 
